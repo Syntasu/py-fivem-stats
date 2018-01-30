@@ -1,4 +1,4 @@
-from snaphot1 import Snapshotter
+from snaphot import Snapshotter
 from api import ServerListApi
 
 def main():
