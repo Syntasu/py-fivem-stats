@@ -1,9 +1,8 @@
-import sys
-import api
+from api import ServerListApi
 
-def main(): 
-    api.HelloWorld();
-
+def main():
+    serverListApi = ServerListApi();
+    serverListApi.Fetch();
 
 if __name__ == "__main__":
     main();
