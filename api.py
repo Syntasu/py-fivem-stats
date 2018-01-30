@@ -1,7 +1,6 @@
 import json
 from urllib.request import Request, urlopen
 
-
 class ServerListApi:
 
     ServerURL = "http://servers-live.fivem.net/api/servers/"

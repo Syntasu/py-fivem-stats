@@ -1,8 +1,14 @@
+from snaphot1 import Snapshotter
 from api import ServerListApi
 
 def main():
-    serverListApi = ServerListApi();
-    serverListApi.Fetch();
+    serverListApi = ServerListApi()
+    json = serverListApi.Fetch()
+
+    snapshotter = Snapshotter(json)
+    snapshot = snapshotter.MakeSnapshot()
+
+    print(snapshot)
 
 if __name__ == "__main__":
-    main();
+    main()
