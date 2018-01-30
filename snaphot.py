@@ -1,3 +1,4 @@
+import re
 import json
 import time
 from cache import Cache
@@ -32,6 +33,12 @@ class Snapshotter:
         elif serverClients >= serverMaxClients:
             self.cache.Increment("server_full", 1)
         
+        serverVersion = serverData["server"]
+        match = re.search('FXServer-master SERVER v1.0.0.(.+?) win32', serverVersion)
+
+        if match:
+            print(match.group(1))
+
         self.cache.Increment("max_client_count", serverMaxClients)
         self.cache.Increment("client_count", serverData["clients"])
         self.cache.Increment("server_count", 1)
