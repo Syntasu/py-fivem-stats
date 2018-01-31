@@ -1,3 +1,5 @@
+import sys
+import codecs
 import re
 import json
 import time
@@ -10,6 +12,7 @@ class Snapshotter:
         self.output = {}
         self.cache = Cache()
         self.versionCount = CountList()
+        self.resourceCount = CountList()
 
     def MakeSnapshot(self):
         self.output["date"] = time.strftime("%x")
@@ -21,6 +24,9 @@ class Snapshotter:
             if "vars" in currentServerData:
                 self.processVarsData(currentServerData["vars"])
 
+            if "resources" in currentServerData:
+                self.processResources(currentServerData["resources"])
+
         self.generateOutput()
 
         return json.dumps(self.output, sort_keys=True, indent=4)
@@ -28,6 +34,12 @@ class Snapshotter:
     def processServerData(self, serverData):
         serverClients = serverData["clients"]
         serverMaxClients = serverData["sv_maxclients"]
+
+        # html = serverData["hostname"]
+        # html = re.sub(r'[^\x00-\x7F]+',' ', html)
+        # html.strip()
+
+        # print(html)
 
         if serverClients == 0:
             self.cache.Increment("server_empty", 1)
@@ -58,6 +70,11 @@ class Snapshotter:
         else:
             self.cache.Increment("scripthook_disabled", 1)
 
+    def processResources(self, resourceData):
+        for item in resourceData:
+            self.resourceCount.Occurrence(item)
+
+
     def generateOutput(self):
         self.output["svCount"] = self.cache.Get("server_count")                                             # Servers count
         self.output["svFull"] = self.cache.Get("server_full")                                               # Servers that are full
@@ -65,8 +82,10 @@ class Snapshotter:
         self.output["svAvgSlots"] = self.cache.Get("max_client_count") / self.cache.Get("server_count")     # Server average slot count.
         self.output["svMaxSlots"] = self.cache.Get("server_max_slots")                                      # Server with highest slot count.
         self.output["svMinSlots"] = self.cache.Get("server_min_slots")                                      # Server with lowest slot count.
-        self.output["svVersion"] = self.versionCount.GetResult()
+        self.output["svVersion"] = self.versionCount.GetResult()                                            # Count of all server versions.
+        self.output["svResources"] = self.resourceCount.GetResultTop(50)                                          # Count of all server versions.
         
+
         self.output["svVarScriptHookEnabled"] = self.cache.Get("scripthook_enabled")                        # Count of server with scripthook enabled
         self.output["svVarScriptHookDisabled"] = self.cache.Get("scripthook_disabled")                      # Count of server with scripthook disabled
         
