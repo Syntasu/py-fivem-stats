@@ -83,11 +83,9 @@ class Snapshotter:
         self.output["svMaxSlots"] = self.cache.Get("server_max_slots")                                      # Server with highest slot count.
         self.output["svMinSlots"] = self.cache.Get("server_min_slots")                                      # Server with lowest slot count.
         self.output["svVersion"] = self.versionCount.GetResult()                                            # Count of all server versions.
-        self.output["svResources"] = self.resourceCount.GetResultTop(50)                                          # Count of all server versions.
+        self.output["svResources"] = self.resourceCount.GetResultTop(50)                                    # Count all the resources of the server
         
-
         self.output["svVarScriptHookEnabled"] = self.cache.Get("scripthook_enabled")                        # Count of server with scripthook enabled
         self.output["svVarScriptHookDisabled"] = self.cache.Get("scripthook_disabled")                      # Count of server with scripthook disabled
         
         self.output["clCount"] = self.cache.Get("client_count")                                             # Total client count.
-        self.output["ptsRatio"] = (self.cache.Get("client_count") / self.cache.Get("server_count"))         # Ratio of player per server.
