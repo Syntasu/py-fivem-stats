@@ -66,7 +66,7 @@ class Snapshotter:
             self.resourceCount.Occurrence(item)
 
     def generateOutput(self):
-        self.output.append(time.strftime("%x"))                                                     # Snapshot date
+        self.output.append(time.strftime("%d-%m-%y_%H:%M:%S"))                                      # Snapshot date
         self.output.append(self.cache.Get("server_count"))                                          # Servers count
         self.output.append(self.cache.Get("server_full"))                                           # Servers that are full
         self.output.append(self.cache.Get("server_empty"))                                          # Servers that are empty
