@@ -2,12 +2,14 @@ import re
 import json
 import time
 from cache import Cache
+from countlist import CountList
 
 class Snapshotter:
     def __init__(self, data):
         self.data = data
         self.output = {}
         self.cache = Cache()
+        self.versionCount = CountList()
 
     def MakeSnapshot(self):
         self.output["date"] = time.strftime("%x")
@@ -32,12 +34,18 @@ class Snapshotter:
 
         elif serverClients >= serverMaxClients:
             self.cache.Increment("server_full", 1)
+
+        if serverMaxClients > self.cache.Get("server_max_slots"):
+            self.cache.Set("server_max_slots", serverMaxClients)
+
+        if serverMaxClients < self.cache.Get("server_min_slots") or self.cache.Get("server_min_slots") == 0:
+            self.cache.Set("server_min_slots", serverMaxClients)
         
         serverVersion = serverData["server"]
         match = re.search('FXServer-master SERVER v1.0.0.(.+?) win32', serverVersion)
 
         if match:
-            print(match.group(1))
+            self.versionCount.Occurrence(match.group(1))
 
         self.cache.Increment("max_client_count", serverMaxClients)
         self.cache.Increment("client_count", serverData["clients"])
@@ -55,6 +63,9 @@ class Snapshotter:
         self.output["svFull"] = self.cache.Get("server_full")                                               # Servers that are full
         self.output["svEmpty"] = self.cache.Get("server_empty")                                             # Servers that are empty
         self.output["svAvgSlots"] = self.cache.Get("max_client_count") / self.cache.Get("server_count")     # Server average slot count.
+        self.output["svMaxSlots"] = self.cache.Get("server_max_slots")                                      # Server with highest slot count.
+        self.output["svMinSlots"] = self.cache.Get("server_min_slots")                                      # Server with lowest slot count.
+        self.output["svVersion"] = self.versionCount.GetResult()
         
         self.output["svVarScriptHookEnabled"] = self.cache.Get("scripthook_enabled")                        # Count of server with scripthook enabled
         self.output["svVarScriptHookDisabled"] = self.cache.Get("scripthook_disabled")                      # Count of server with scripthook disabled
