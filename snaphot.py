@@ -74,7 +74,8 @@ class Snapshotter:
         self.output.append(self.cache.Get("server_max_slots"))                                      # Server with highest slot count.
         self.output.append(self.cache.Get("server_min_slots"))                                      # Server with lowest slot count.
         self.output.append(self.versionCount.GetResult())                                           # Count of all server versions.
-        self.output.append(self.resourceCount.GetResultTop(50))                                     # Count all the resources of the server
+        self.output.append(self.resourceCount.GetCount())
+        self.output.append(self.resourceCount.GetResult())                                    # Count all the resources of the server
         self.output.append(self.cache.Get("scripthook_enabled"))                                    # Count of server with scripthook enabled
         self.output.append(self.cache.Get("scripthook_disabled"))                                   # Count of server with scripthook disabled
         self.output.append(self.cache.Get("client_count"))                                          # Total client count.

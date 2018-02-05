@@ -19,7 +19,9 @@ class CountList:
     def GetResult(self):
         return self.buffer
 
-    def GetResultTop(self, count):
+    def GetCount(self):
+        return len(self.buffer)
 
+    def GetResultTop(self, count):
         top = dict(sorted(self.buffer.items(), reverse=True, key=lambda x: x[1])[:count])
         return top

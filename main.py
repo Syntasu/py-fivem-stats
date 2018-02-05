@@ -1,18 +1,31 @@
+import asyncio
+import time
+import random
+ 
 from snaphot import Snapshotter
 from api import ServerListApi
 from saver import Saver
 
-def main():
-    serverListApi = ServerListApi()
-    json = serverListApi.Fetch()
+serverListApi = ServerListApi()
+fileSaver = Saver()
 
+def TakeSnapshot():
+    json = serverListApi.Fetch()
     snapshotter = Snapshotter(json)
     snapshot = snapshotter.MakeSnapshot()
-
-    fileSaver = Saver()
     fileSaver.Save(snapshot)
 
-    print(snapshot)
+TakeSnapshot()
 
-if __name__ == "__main__":
-    main()
+from datetime import datetime, date
+
+delay = 15 * 60
+end = datetime.now()
+while True:
+    start = datetime.now()
+    delta = start - end
+
+    if(delta.total_seconds() > delay):
+        print("MADE SNAPHOT")
+        end = datetime.now()
+
