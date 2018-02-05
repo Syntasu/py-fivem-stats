@@ -5,6 +5,7 @@ import random
 from snaphot import Snapshotter
 from api import ServerListApi
 from saver import Saver
+from timed import TimedTask
 
 serverListApi = ServerListApi()
 fileSaver = Saver()
@@ -15,17 +16,28 @@ def TakeSnapshot():
     snapshot = snapshotter.MakeSnapshot()
     fileSaver.Save(snapshot)
 
-TakeSnapshot()
+def SquashHourly():
+    print("Squash me senpai")
 
-from datetime import datetime, date
+def SquashDaily():
+    print("Squash me senpai")
 
-delay = 15 * 60
-end = datetime.now()
+def SquashMonthly():
+    print("Squash me senpai")
+
+def Say():
+    print("Hello world!")
+
+fetchServerListTask = TimedTask(10 * 60, TakeSnapshot)
+squashSnapshotsHourly = TimedTask(60 * 60, SquashHourly)
+squashSnapshotsDaily = TimedTask(24 * 60 * 60, SquashDaily)
+squashSnapshotsMonthly = TimedTask(30 * 24 * 60 * 60, SquashMonthly)
+
+
 while True:
-    start = datetime.now()
-    delta = start - end
+    fetchServerListTask.Poll()
+    squashSnapshotsHourly.Poll()
+    squashSnapshotsDaily.Poll()
+    squashSnapshotsMonthly.Poll()
 
-    if(delta.total_seconds() > delay):
-        print("MADE SNAPHOT")
-        end = datetime.now()
 
